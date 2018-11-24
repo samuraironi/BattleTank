@@ -24,7 +24,6 @@ void ATankPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AimTowardsCrossair();
-	UE_LOG(LogTemp, Warning, TEXT("PlayerController ticking"));
 }
 
 ATank* ATankPlayerController::GetControlledTank() const
@@ -39,7 +38,7 @@ void ATankPlayerController::AimTowardsCrossair()
 	FVector HitLocation;
 	if (GetSightRayLocation(HitLocation))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Screen Location: %s"), *HitLocation.ToString());
+		GetControlledTank()->AimAt(HitLocation);
 	}
 }
 
