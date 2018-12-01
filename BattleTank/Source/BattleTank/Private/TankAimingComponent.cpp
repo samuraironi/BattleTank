@@ -74,6 +74,11 @@ void UTankAimingComponent::SetBarrelReference(UTankBarrel * barrel)
 	Barrel = barrel;
 }
 
+void UTankAimingComponent::SetTurretReference(UTankTurret * turret)
+{
+	Turret = turret;
+}
+
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
