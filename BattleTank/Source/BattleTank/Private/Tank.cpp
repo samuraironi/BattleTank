@@ -2,7 +2,7 @@
 
 #include "Tank.h"
 #include "TankAimingComponent.h"
-
+#include "Engine/World.h"
 
 // Sets default values
 ATank::ATank()
@@ -40,4 +40,10 @@ void ATank::SetTurretReference(UTankTurret * turret)
 {
 	if (!turret) { return; }
 	TankAimingComponent->SetTurretReference(turret);
+}
+
+void ATank::Fire()
+{
+	auto time = GetWorld()->GetTimeSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("%f Tank Fires"), time);
 }
