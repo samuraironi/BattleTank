@@ -50,10 +50,13 @@ void ATank::Fire()
 	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
 	if (Barrel && isReloaded) 
 	{
+		auto socketRotation = Barrel->GetSocketRotation(FName("Projectile"));
+		auto socketLocation = Barrel->GetSocketLocation(FName("Projectile"));
+
 		auto projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBlueprint,
-			Barrel->GetSocketLocation(FName("Projectile")),
-			Barrel->GetSocketRotation(FName("Projectile"))
+			socketLocation,
+			socketRotation
 			);
 
 		projectile->Launch(LaunchSpeed);

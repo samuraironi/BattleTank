@@ -9,6 +9,7 @@
 class UTankBarrel;
 class UTankTurret;
 class UTankAimingComponent;
+class UTankTrack;
 class AProjectile;
 
 UCLASS()
@@ -51,7 +52,9 @@ private:
 	
 	UTankBarrel* Barrel = nullptr;
 
-	
+	UTankTrack* LeftTrack = nullptr;
+
+	UTankTrack* RightTrack = nullptr;
 
 	double LastFireTime = 0;
 };
