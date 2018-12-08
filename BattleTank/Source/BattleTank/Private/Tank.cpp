@@ -15,7 +15,6 @@ ATank::ATank()
 
 	//create components into blueprints from code
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming Components"));
-	TankMovementComponent = CreateDefaultSubobject<UTankMovementComponent>(FName("Movement Components"));
 }
 
 // Called when the game starts or when spawned
