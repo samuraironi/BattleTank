@@ -9,7 +9,7 @@
 class UTankBarrel;
 class UTankTurret;
 class UTankAimingComponent;
-class UTankTrack;
+class UTankMovementComponent;
 class AProjectile;
 
 UCLASS()
@@ -33,6 +33,9 @@ public:
 	void Fire();
 protected:
 	UTankAimingComponent* TankAimingComponent = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	UTankMovementComponent* TankMovementComponent = nullptr;
 private:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,10 +54,6 @@ private:
 
 	
 	UTankBarrel* Barrel = nullptr;
-
-	UTankTrack* LeftTrack = nullptr;
-
-	UTankTrack* RightTrack = nullptr;
 
 	double LastFireTime = 0;
 };
