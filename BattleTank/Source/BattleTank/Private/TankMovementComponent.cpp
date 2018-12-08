@@ -5,19 +5,23 @@
 
 void UTankMovementComponent::Initialise(UTankTrack * leftTrack, UTankTrack * rightTrack)
 {
-	if (!leftTrack || !rightTrack) { return; }
+	
 	LeftTrack = leftTrack;
 	RightTrack = rightTrack;
 }
 
 void UTankMovementComponent::IntendMoveForward(float Throw)
 {
-	//auto time = GetWorld()->GetTimeSeconds();
-	auto name = GetName();
-	UE_LOG(LogTemp, Warning, TEXT("Intend move forward throw: %f"), Throw);
-
+	if (!LeftTrack || !RightTrack) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
+}
+
+void UTankMovementComponent::IntendRotate(float Throw)
+{
+	if (!LeftTrack || !RightTrack) { return; }
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(-Throw);
 }
 
 
