@@ -26,19 +26,12 @@ public:
 	// Sets default values for this component's properties
 	UTankAimingComponent();
 
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void Initialise(UTankBarrel * barrel, UTankTurret * turret);
 
 	void AimAt(FVector WorldSpaceAim, float LauncSpeed);
-
-	void SetBarrelReference(UTankBarrel* barrel);
-	void SetTurretReference(UTankTurret* turret);
-
 	
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	EFiringStatue FiringState = EFiringStatue::Reloading;
 private:

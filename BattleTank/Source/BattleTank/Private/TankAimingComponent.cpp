@@ -14,23 +14,12 @@ UTankAimingComponent::UTankAimingComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
 }
 
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
+void UTankAimingComponent::Initialise(UTankBarrel * barrel, UTankTurret * turret)
 {
-	Super::BeginPlay();
-
-	// ...
-}
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
+	Barrel = barrel;
+	Turret = turret;
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LauncSpeed)
@@ -60,18 +49,9 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LauncSpeed)
 	}
 }
 
-void UTankAimingComponent::SetBarrelReference(UTankBarrel * barrel)
-{
-	Barrel = barrel;
-}
-
-void UTankAimingComponent::SetTurretReference(UTankTurret * turret)
-{
-	Turret = turret;
-}
-
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
+	if (!Barrel || !Turret) { return; }
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimAsRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotator;
