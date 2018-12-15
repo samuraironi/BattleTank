@@ -29,6 +29,9 @@ protected:
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
+
+	void BeginPlay() override;
+
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		TSubclassOf<AProjectile> ProjectileBlueprint;
 
