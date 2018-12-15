@@ -14,8 +14,7 @@ enum class EFiringStatue : uint8
 	Reloading
 };
 
-class UTankBarrel;
-class UTankTurret;
+class AProjectile;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
@@ -29,14 +28,29 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void Initialise(UTankBarrel * barrel, UTankTurret * turret);
 
-	void AimAt(FVector WorldSpaceAim, float LauncSpeed);
+	void AimAt(FVector HitLocation);
+
+	UFUNCTION(BlueprintCallable, Category = Firing)
+	void Fire();
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	EFiringStatue FiringState = EFiringStatue::Reloading;
 private:
+
+	void MoveBarrelTowards(FVector AimDirection);
+
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
 
-	void MoveBarrelTowards(FVector AimDirection);
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	float LaunchSpeed = 4000; //Sensible starting value of 1000 m/s
+
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+		TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+		float ReloadTimeInSeconds = 3;
+
+	double LastFireTime = 0;
 };
