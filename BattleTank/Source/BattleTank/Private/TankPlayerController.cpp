@@ -27,7 +27,8 @@ void ATankPlayerController::AimTowardsCrossair()
 	if (!ensure(AimingComponent)) { return; }
 
 	FVector HitLocation;
-	if (GetSightRayLocation(HitLocation))
+	bool bGotHitLocation = GetSightRayLocation(HitLocation);
+	if (bGotHitLocation)
 	{
 		AimingComponent->AimAt(HitLocation);
 	}
@@ -42,9 +43,9 @@ bool ATankPlayerController::GetSightRayLocation(FVector& HitLocation) const
 	FVector LookDirection;
 	if (GetLookDirection(ScreenLocation, LookDirection))
 	{
-		GetLookVectorhitLocation(LookDirection, HitLocation);
+		return GetLookVectorhitLocation(LookDirection, HitLocation);
 	}
-	return true;
+	return false;
 }
 
 bool ATankPlayerController::GetLookVectorhitLocation(FVector LookDirection, FVector& HitLocation) const
