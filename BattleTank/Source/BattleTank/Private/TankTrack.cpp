@@ -5,16 +5,32 @@
 
 UTankTrack::UTankTrack()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UTankTrack::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UTankTrack::BeginPlay()
+{
+	Super::BeginPlay();
+	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit);
+}
+
+void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	DriveTrack();
+	ApplySidewaysForce();
+	CurrentThrottle = 0;
+}
+
+
+void UTankTrack::ApplySidewaysForce()
 {
 	//cos between vector of the speed And component speed(velocity)
 	auto slippageSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
 
+	
 	//calculate acceleration of stopping slipping (reason why - slippageSpeed)
-	auto correctionAcseleration = -slippageSpeed / DeltaTime * GetRightVector();
+	auto deltaTime = GetWorld()->GetDeltaSeconds();
+	auto correctionAcseleration = -slippageSpeed / deltaTime * GetRightVector();
 
 	auto tank = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
 
@@ -25,7 +41,12 @@ void UTankTrack::TickComponent(float DeltaTime, enum ELevelTick TickType, FActor
 
 void UTankTrack::SetThrottle(float throttle)
 {
-	auto forceAplied = GetForwardVector() * throttle * TrackMaxDrivingForce;
+	CurrentThrottle = FMath::Clamp<float>(CurrentThrottle + throttle, -1, 1);
+}
+
+void UTankTrack::DriveTrack()
+{
+	auto forceAplied = GetForwardVector() * CurrentThrottle * TrackMaxDrivingForce;
 	auto forceLocation = GetComponentLocation();
 	auto tankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	tankRoot->AddForceAtLocation(forceAplied, forceLocation);
