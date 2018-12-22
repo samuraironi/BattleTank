@@ -20,7 +20,7 @@ protected:
 private:
 
 	virtual void BeginPlay() override;
-
+	virtual void SetPawn(APawn* InPawn) override;
 	virtual void Tick(float DeltaTime) override;
 
 	void AimTowardsCrossair();
@@ -38,4 +38,7 @@ private:
 
 	bool GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const;
 	bool GetLookVectorhitLocation(FVector LookDirection, FVector& HitLocation) const;
+
+	UFUNCTION()
+	void OnPossesedTankDeath();
 };
