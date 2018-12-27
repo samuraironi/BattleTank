@@ -26,7 +26,14 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	float TotalForceMagnitudeThisFrame = 0;
+
 	void SetupConstraints();
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	void ApplyForce();
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
 	USphereComponent* Wheel = nullptr;
