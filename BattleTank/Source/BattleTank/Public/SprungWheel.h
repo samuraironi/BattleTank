@@ -39,6 +39,9 @@ private:
 	USphereComponent* Wheel = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
+	UStaticMeshComponent* WheelMesh = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = Components)
 	USphereComponent* Axle = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)

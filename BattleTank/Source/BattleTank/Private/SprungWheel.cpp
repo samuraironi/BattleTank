@@ -2,6 +2,7 @@
 
 #include "SprungWheel.h"
 #include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Engine/World.h"
 
@@ -21,6 +22,13 @@ ASprungWheel::ASprungWheel()
 
 	Wheel = CreateDefaultSubobject<USphereComponent>(FName("Wheel"));
 	Wheel->SetupAttachment(Axle);
+
+	WheelMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("WheelMesh"));
+	WheelMesh->SetupAttachment(Wheel);
+
+	WheelMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	WheelMesh->SetWorldScale3D(FVector(0.8f));
+	
 
 	AxleWheelConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("AxleWheelConstraint"));
 	AxleWheelConstraint->SetupAttachment(Axle);
@@ -56,7 +64,6 @@ void ASprungWheel::Tick(float DeltaTime)
 
 	if (GetWorld()->TickGroup == TG_PostPhysics)
 	{
-
 		TotalForceMagnitudeThisFrame = 0;
 	}
 }
