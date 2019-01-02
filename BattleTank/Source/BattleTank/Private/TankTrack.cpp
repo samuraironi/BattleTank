@@ -3,6 +3,7 @@
 #include "TankTrack.h"
 #include "Engine/World.h"
 #include "SprungWheel.h"
+#include "Wheel.h"
 #include "SpawnPoint.h"
 
 UTankTrack::UTankTrack()
@@ -20,17 +21,24 @@ void UTankTrack::SetThrottle(float throttle)
 void UTankTrack::DriveTrack(float CurrentThrottle)
 {
 	auto forceAplied = CurrentThrottle * TrackMaxDrivingForce;
-	auto Wheels = GetWheels();
-	auto ForcePerWheel = forceAplied / Wheels.Num();
-	for (ASprungWheel* Wheel : Wheels)
+	auto SpringWheels = GetWheels<ASprungWheel>();
+	auto Wheels = GetWheels<AWheel>();
+	auto ForcePerWheel = forceAplied / (SpringWheels.Num() + Wheels.Num());
+	for (ASprungWheel* Wheel : SpringWheels)
+	{
+		Wheel->AddDrivingForce(ForcePerWheel);
+	}
+
+	for (AWheel* Wheel : Wheels)
 	{
 		Wheel->AddDrivingForce(ForcePerWheel);
 	}
 }
 
-TArray<class ASprungWheel*> UTankTrack::GetWheels() const
+template<class T>
+TArray<T*> UTankTrack::GetWheels() const
 {
-	TArray<ASprungWheel*> ResultArray;
+	TArray<T*> ResultArray;
 	TArray<USceneComponent*> Children;
 	GetChildrenComponents(true, Children);
 	for (USceneComponent* Child : Children)
@@ -39,10 +47,10 @@ TArray<class ASprungWheel*> UTankTrack::GetWheels() const
 		if (!SpawnPointChild) continue;
 
 		AActor* SpawnedChild = SpawnPointChild->GetSpawnedActor();
-		auto SprungWheel = Cast<ASprungWheel>(SpawnedChild);
-		if (!SprungWheel) continue;
+		auto Wheel = Cast<T>(SpawnedChild);
+		if (!Wheel) continue;
 
-		ResultArray.Add(SprungWheel);
+		ResultArray.Add(Wheel);
 	}
 	return ResultArray;
 }

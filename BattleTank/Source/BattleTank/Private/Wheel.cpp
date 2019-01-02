@@ -35,6 +35,7 @@ void AWheel::Tick(float DeltaTime)
 	{
 		TotalForceMagnitudeThisFrame = 0;
 	}
+	//ApplyForce();
 }
 
 void AWheel::AddDrivingForce(float ForceMagnitude)

@@ -25,7 +25,8 @@ public:
 private:
 	UTankTrack();
 
-	TArray<class ASprungWheel*> GetWheels() const;
+	template<class T>
+	FORCEINLINE TArray<T*> GetWheels() const;
 
 	void DriveTrack(float CurrentThrottle);
 };
