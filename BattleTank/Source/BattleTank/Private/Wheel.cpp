@@ -43,6 +43,22 @@ void AWheel::AddDrivingForce(float ForceMagnitude)
 	TotalForceMagnitudeThisFrame += ForceMagnitude;
 }
 
+void AWheel::DriveWheel(float relativeSpeed)
+{
+	relativeSpeed = FMath::Clamp<float>(relativeSpeed, -1, +1);
+
+	auto rotationChange = relativeSpeed * MaxDegreesPerSecond * GetWorld()->DeltaTimeSeconds;
+
+	MaxDegreesPerSecond ++;
+
+	if (CurrentWheelPos >= 360)
+		CurrentWheelPos = 0;
+	else
+		CurrentWheelPos += rotationChange;
+
+	Wheel->SetRelativeRotation(FRotator(CurrentWheelPos, 0, 0));
+}
+
 void AWheel::ApplyForce()
 {
 	Wheel->AddForce(Wheel->GetForwardVector() * TotalForceMagnitudeThisFrame);

@@ -2,6 +2,8 @@
 
 #include "TankMovementComponent.h"
 #include "TankTrack.h"
+#include "Wheel.h"
+#include "SprungWheel.h"
 
 void UTankMovementComponent::Initialise(UTankTrack * leftTrack, UTankTrack * rightTrack)
 {
@@ -24,13 +26,43 @@ void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, boo
 void UTankMovementComponent::IntendMoveForward(float Throw)
 {
 	if (!ensure(LeftTrack && RightTrack)) { return; }
-	LeftTrack->SetThrottle(Throw);
-	RightTrack->SetThrottle(Throw);
+	//LeftTrack->SetThrottle(Throw);
+	//RightTrack->SetThrottle(Throw);
+
+	auto leftWheels = LeftTrack->GetWheels<AWheel>();
+	auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
+	for (AWheel* wheel : leftWheels)
+	{
+		auto forceAplied = Throw * LeftTrack->TrackMaxDrivingForce;
+		auto ForcePerWheel = forceAplied / (leftSpringWheels.Num() + leftWheels.Num());
+		wheel->DriveWheel(-ForcePerWheel);
+	}
+	for (ASprungWheel* wheel : leftSpringWheels)
+	{
+		auto forceAplied = Throw * LeftTrack->TrackMaxDrivingForce;
+		auto ForcePerWheel = forceAplied / (leftSpringWheels.Num() + leftWheels.Num());
+		wheel->DriveWheel(-ForcePerWheel);
+	}
+
+	auto rightWheels = RightTrack->GetWheels<AWheel>();
+	auto rightSpringWheels = RightTrack->GetWheels<ASprungWheel>();
+	for (AWheel* wheel : rightWheels)
+	{
+		auto forceAplied = Throw * RightTrack->TrackMaxDrivingForce;
+		auto ForcePerWheel = forceAplied / (rightSpringWheels.Num() + rightWheels.Num());
+		wheel->DriveWheel(-ForcePerWheel);
+	}
+	for (ASprungWheel* wheel : rightSpringWheels)
+	{
+		auto forceAplied = Throw * RightTrack->TrackMaxDrivingForce;
+		auto ForcePerWheel = forceAplied / (rightSpringWheels.Num() + rightWheels.Num());
+		wheel->DriveWheel(-ForcePerWheel);
+	}
 }
 
 void UTankMovementComponent::IntendRotate(float Throw)
 {
 	if (!ensure(LeftTrack && RightTrack)) { return; }
-	LeftTrack->SetThrottle(Throw);
-	RightTrack->SetThrottle(-Throw);
+	//LeftTrack->SetThrottle(Throw);
+	//RightTrack->SetThrottle(-Throw);
 }
