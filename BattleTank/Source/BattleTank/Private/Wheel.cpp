@@ -35,7 +35,7 @@ void AWheel::Tick(float DeltaTime)
 	{
 		TotalForceMagnitudeThisFrame = 0;
 	}
-	//ApplyForce();
+	ApplyForce();
 }
 
 void AWheel::AddDrivingForce(float ForceMagnitude)
@@ -61,6 +61,6 @@ void AWheel::DriveWheel(float relativeSpeed)
 
 void AWheel::ApplyForce()
 {
-	Wheel->AddForce(Wheel->GetForwardVector() * TotalForceMagnitudeThisFrame);
+	//Wheel->AddForce(Wheel->GetForwardVector() * TotalForceMagnitudeThisFrame);
 }
 

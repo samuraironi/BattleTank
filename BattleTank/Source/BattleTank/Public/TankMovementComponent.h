@@ -7,6 +7,7 @@
 #include "TankMovementComponent.generated.h"
 
 class UTankTrack;
+class UTankTrackComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankMovementComponent : public UNavMovementComponent
@@ -15,13 +16,13 @@ class BATTLETANK_API UTankMovementComponent : public UNavMovementComponent
 
 public:
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void  IntendMoveForward(float Throw);
+	void  IntendMoveForward(float Throw);
 
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void IntendRotate(float Throw);
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
-		void Initialise(UTankTrack * leftTrack, UTankTrack * rightTrack);
+	void Initialise(UTankTrackComponent* leftTrackComponent, UTankTrackComponent* rightTrackComponent);
 
 	
 private:
@@ -30,4 +31,7 @@ private:
 
 	UTankTrack* LeftTrack = nullptr;
 	UTankTrack* RightTrack = nullptr;
+
+	UTankTrackComponent* LeftTrackComponent = nullptr;
+	UTankTrackComponent* RightTrackComponent = nullptr;
 };

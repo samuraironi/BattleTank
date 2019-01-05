@@ -4,15 +4,20 @@
 #include "TankTrack.h"
 #include "Wheel.h"
 #include "SprungWheel.h"
+#include "TankTrackComponent.h"
 
-void UTankMovementComponent::Initialise(UTankTrack * leftTrack, UTankTrack * rightTrack)
+void UTankMovementComponent::Initialise(UTankTrackComponent* leftTrackComponent, UTankTrackComponent* rightTrackComponent)
 {
-	LeftTrack = leftTrack;
-	RightTrack = rightTrack;
+	//LeftTrack = leftTrack;
+	//RightTrack = rightTrack;
+
+	LeftTrackComponent = leftTrackComponent;
+	RightTrackComponent = rightTrackComponent;
 }
 
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed)
 {
+	UE_LOG(LogTemp, Warning, TEXT("request direct move"));
 	auto TankForwardDirection = GetOwner()->GetActorForwardVector().GetSafeNormal();
 	auto AIForwardIntention = MoveVelocity.GetSafeNormal();
 
@@ -25,11 +30,15 @@ void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, boo
 
 void UTankMovementComponent::IntendMoveForward(float Throw)
 {
-	if (!ensure(LeftTrack && RightTrack)) { return; }
+	//if (!ensure(LeftTrack && RightTrack)) { return; }
 	//LeftTrack->SetThrottle(Throw);
 	//RightTrack->SetThrottle(Throw);
 
-	auto leftWheels = LeftTrack->GetWheels<AWheel>();
+	if (!ensure(LeftTrackComponent && RightTrackComponent)) { return; }
+	LeftTrackComponent->SetThrottle(Throw);
+	RightTrackComponent->SetThrottle(Throw);
+
+	/*auto leftWheels = LeftTrack->GetWheels<AWheel>();
 	auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
 	for (AWheel* wheel : leftWheels)
 	{
@@ -57,12 +66,12 @@ void UTankMovementComponent::IntendMoveForward(float Throw)
 		auto forceAplied = Throw * RightTrack->TrackMaxDrivingForce;
 		auto ForcePerWheel = forceAplied / (rightSpringWheels.Num() + rightWheels.Num());
 		wheel->DriveWheel(-ForcePerWheel);
-	}
+	}*/
 }
 
 void UTankMovementComponent::IntendRotate(float Throw)
 {
-	if (!ensure(LeftTrack && RightTrack)) { return; }
+	//if (!ensure(LeftTrack && RightTrack)) { return; }
 	//LeftTrack->SetThrottle(Throw);
 	//RightTrack->SetThrottle(-Throw);
 }
