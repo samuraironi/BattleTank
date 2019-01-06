@@ -26,6 +26,16 @@ void AWheel::BeginPlay()
 	
 }
 
+float AWheel::GetRadius()
+{
+	return  Wheel->GetScaledSphereRadius();
+}
+
+FVector AWheel::GetLocation()
+{
+	return Wheel->GetComponentLocation();
+}
+
 // Called every frame
 void AWheel::Tick(float DeltaTime)
 {

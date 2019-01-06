@@ -15,6 +15,37 @@ void UTankMovementComponent::Initialise(UTankTrackComponent* leftTrackComponent,
 	RightTrackComponent = rightTrackComponent;
 }
 
+void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Tick from movement"));
+	if (LeftTrackComponent)
+	{
+		auto leftWheels = LeftTrackComponent->GetWheels<AWheel>();
+		auto leftSpringWheels = LeftTrackComponent->GetWheels<ASprungWheel>();
+		for (int i = 0; i < leftSpringWheels.Num(); i++)
+		{
+			LeftTrackComponent->SetupSpline(i, leftSpringWheels[i]->GetLocation(), leftSpringWheels[i]->GetRadius());
+		}
+		for (int i = 0; i < leftWheels.Num(); i++)
+		{
+
+		}
+	}
+	if (RightTrackComponent)
+	{
+		auto rightWheels = RightTrackComponent->GetWheels<AWheel>();
+		auto rightSpringWheels = RightTrackComponent->GetWheels<ASprungWheel>();
+		for (int i = 0; i < rightSpringWheels.Num(); i++)
+		{
+			RightTrackComponent->SetupSpline(i, rightSpringWheels[i]->GetLocation(), rightSpringWheels[i]->GetRadius());
+		}
+		for (int i = 0; i < rightWheels.Num(); i++)
+		{
+
+		}
+	}
+}
+
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed)
 {
 	UE_LOG(LogTemp, Warning, TEXT("request direct move"));

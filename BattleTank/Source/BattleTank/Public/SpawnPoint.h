@@ -24,6 +24,9 @@ protected:
 	virtual void BeginPlay() override;
 		
 private:
+	UPROPERTY(EditAnywhere, Category = Setup)
+	int Id = 0;
+
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	TSubclassOf<AActor> SpawnClass;
 

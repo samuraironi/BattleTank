@@ -15,6 +15,9 @@ class BATTLETANK_API UTankMovementComponent : public UNavMovementComponent
 	GENERATED_BODY()
 
 public:
+	// Called every frame
+	void TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
+
 	UFUNCTION(BlueprintCallable, Category = Input)
 	void  IntendMoveForward(float Throw);
 
@@ -29,8 +32,8 @@ private:
 	//Called from the path finder logic
 	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
 
-	UTankTrack* LeftTrack = nullptr;
-	UTankTrack* RightTrack = nullptr;
+	//UTankTrack* LeftTrack = nullptr;
+	//UTankTrack* RightTrack = nullptr;
 
 	UTankTrackComponent* LeftTrackComponent = nullptr;
 	UTankTrackComponent* RightTrackComponent = nullptr;

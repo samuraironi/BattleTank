@@ -23,6 +23,9 @@ public:
 
 	void DriveWheel(float relativeSpeed);
 
+	float GetRadius();
+
+	FVector GetLocation();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,6 +38,13 @@ private:
 	float CurrentWheelPos = 0;
 
 	int MaxDegreesPerSecond = 5;
+
+	float Location = 0;
+
+	float Radius = 0;
+
+	UPROPERTY(EditAnywhere, Category = Setup)
+	int Id = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
 	USphereComponent* Wheel = nullptr;

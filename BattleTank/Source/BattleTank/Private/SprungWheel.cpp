@@ -94,6 +94,16 @@ void ASprungWheel::DriveWheel(float relativeSpeed)
 	Wheel->SetRelativeRotation(FRotator(CurrentWheelPos, 0, 0));
 }
 
+float ASprungWheel::GetRadius()
+{
+	return  Wheel->GetScaledSphereRadius();
+}
+
+FVector ASprungWheel::GetLocation()
+{
+	return Wheel->GetComponentLocation();
+}
+
 void ASprungWheel::ApplyForce()
 {
 	Wheel->AddForce(Axle->GetForwardVector() * TotalForceMagnitudeThisFrame);
