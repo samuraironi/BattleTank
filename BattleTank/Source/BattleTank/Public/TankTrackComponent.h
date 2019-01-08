@@ -37,7 +37,7 @@ protected:
 	float TrackTicknessOffset = 10;
 
 private:
-	UTankTrackComponent();
+	UTankTrackComponent(const FObjectInitializer& objectInitializer);
 
 	UFUNCTION(BlueprintCallable)
 	void Build(UInstancedStaticMeshComponent* mesh);

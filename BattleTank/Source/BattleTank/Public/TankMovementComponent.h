@@ -35,6 +35,6 @@ private:
 	//UTankTrack* LeftTrack = nullptr;
 	//UTankTrack* RightTrack = nullptr;
 
-	UTankTrackComponent* LeftTrackComponent = nullptr;
-	UTankTrackComponent* RightTrackComponent = nullptr;
+	UTankTrackComponent* LeftTrack = nullptr;
+	UTankTrackComponent* RightTrack = nullptr;
 };

@@ -6,7 +6,7 @@
 #include "SpawnPoint.h"
 #include "Components/InstancedStaticMeshComponent.h"
 
-UTankTrackComponent::UTankTrackComponent()
+UTankTrackComponent::UTankTrackComponent(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
 {
 }
 

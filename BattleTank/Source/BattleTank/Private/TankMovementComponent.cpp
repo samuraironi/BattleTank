@@ -11,33 +11,33 @@ void UTankMovementComponent::Initialise(UTankTrackComponent* leftTrackComponent,
 	//LeftTrack = leftTrack;
 	//RightTrack = rightTrack;
 
-	LeftTrackComponent = leftTrackComponent;
-	RightTrackComponent = rightTrackComponent;
+	LeftTrack = leftTrackComponent;
+	RightTrack = rightTrackComponent;
 }
 
 void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Tick from movement"));
-	if (LeftTrackComponent)
+	if (LeftTrack)
 	{
-		auto leftWheels = LeftTrackComponent->GetWheels<AWheel>();
-		auto leftSpringWheels = LeftTrackComponent->GetWheels<ASprungWheel>();
+		auto leftWheels = LeftTrack->GetWheels<AWheel>();
+		auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < leftSpringWheels.Num(); i++)
 		{
-			LeftTrackComponent->SetupSpline(i, leftSpringWheels[i]->GetLocation(), leftSpringWheels[i]->GetRadius());
+			//LeftTrack->SetupSpline(i, leftSpringWheels[i]->GetLocation(), leftSpringWheels[i]->GetRadius());
 		}
 		for (int i = 0; i < leftWheels.Num(); i++)
 		{
 
 		}
 	}
-	if (RightTrackComponent)
+	if (RightTrack)
 	{
-		auto rightWheels = RightTrackComponent->GetWheels<AWheel>();
-		auto rightSpringWheels = RightTrackComponent->GetWheels<ASprungWheel>();
+		auto rightWheels = RightTrack->GetWheels<AWheel>();
+		auto rightSpringWheels = RightTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < rightSpringWheels.Num(); i++)
 		{
-			RightTrackComponent->SetupSpline(i, rightSpringWheels[i]->GetLocation(), rightSpringWheels[i]->GetRadius());
+			//RightTrack->SetupSpline(i, rightSpringWheels[i]->GetLocation(), rightSpringWheels[i]->GetRadius());
 		}
 		for (int i = 0; i < rightWheels.Num(); i++)
 		{
@@ -65,9 +65,9 @@ void UTankMovementComponent::IntendMoveForward(float Throw)
 	//LeftTrack->SetThrottle(Throw);
 	//RightTrack->SetThrottle(Throw);
 
-	if (!ensure(LeftTrackComponent && RightTrackComponent)) { return; }
-	LeftTrackComponent->SetThrottle(Throw);
-	RightTrackComponent->SetThrottle(Throw);
+	if (!ensure(LeftTrack && RightTrack)) { return; }
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(Throw);
 
 	/*auto leftWheels = LeftTrack->GetWheels<AWheel>();
 	auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
