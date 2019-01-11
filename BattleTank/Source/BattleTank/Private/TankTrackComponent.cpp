@@ -8,6 +8,7 @@
 
 UTankTrackComponent::UTankTrackComponent(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
 {
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UTankTrackComponent::Build(UInstancedStaticMeshComponent * mesh)
