@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SpawnPoint.h"
+#include "SprungWheel.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 
@@ -14,12 +15,21 @@ USpawnPoint::USpawnPoint()
 	// ...
 }
 
+void USpawnPoint::OnRegister()
+{
+	Super::OnRegister();
+}
 
 // Called when the game starts
 void USpawnPoint::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetSpawnActor();
+}
+
+void USpawnPoint::SetSpawnActor()
+{
 	SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(SpawnClass, GetComponentTransform());
 	if (!SpawnedActor) { return; }
 	SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);

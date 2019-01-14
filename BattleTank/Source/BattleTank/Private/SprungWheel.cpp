@@ -14,9 +14,17 @@ ASprungWheel::ASprungWheel()
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.TickGroup = TG_PostPhysics;
 
+	bHidden = false;
+	bHiddenEd = false;
+
+	BuildWheel();
+}
+
+void ASprungWheel::BuildWheel()
+{
 	MassWheelConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("MassWheelConstraint"));
 	SetRootComponent(MassWheelConstraint);
-	
+
 	Axle = CreateDefaultSubobject<USphereComponent>(FName("Axle"));
 	Axle->SetupAttachment(MassWheelConstraint);
 
@@ -28,7 +36,7 @@ ASprungWheel::ASprungWheel()
 
 	WheelMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	WheelMesh->SetWorldScale3D(FVector(0.8f));
-	
+
 
 	AxleWheelConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(FName("AxleWheelConstraint"));
 	AxleWheelConstraint->SetupAttachment(Axle);
@@ -78,6 +86,21 @@ void ASprungWheel::AddDrivingForce(float ForceMagnitude)
 	TotalForceMagnitudeThisFrame += ForceMagnitude;
 }
 
+float ASprungWheel::GetRadius()
+{
+	return  Wheel->GetScaledSphereRadius();
+}
+
+FVector ASprungWheel::GetLocation()
+{
+	return Wheel->GetComponentLocation();
+}
+
+void ASprungWheel::ApplyForce()
+{
+	Wheel->AddForce(Axle->GetForwardVector() * TotalForceMagnitudeThisFrame);
+}
+
 void ASprungWheel::DriveWheel(float relativeSpeed)
 {
 	relativeSpeed = FMath::Clamp<float>(relativeSpeed, -1, +1);
@@ -92,20 +115,5 @@ void ASprungWheel::DriveWheel(float relativeSpeed)
 		CurrentWheelPos += rotationChange;
 
 	Wheel->SetRelativeRotation(FRotator(CurrentWheelPos, 0, 0));
-}
-
-float ASprungWheel::GetRadius()
-{
-	return  Wheel->GetScaledSphereRadius();
-}
-
-FVector ASprungWheel::GetLocation()
-{
-	return Wheel->GetComponentLocation();
-}
-
-void ASprungWheel::ApplyForce()
-{
-	Wheel->AddForce(Axle->GetForwardVector() * TotalForceMagnitudeThisFrame);
 }
 

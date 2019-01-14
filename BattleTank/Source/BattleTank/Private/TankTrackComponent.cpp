@@ -5,10 +5,23 @@
 #include "Wheel.h"
 #include "SpawnPoint.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "Engine/World.h"
 
 UTankTrackComponent::UTankTrackComponent(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UTankTrackComponent::TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction * thisTickFunction)
+{
+	Super::TickComponent(DeltaTime, tickType, thisTickFunction);
+
+	if (GetWorld()->TickGroup == TG_PostPhysics)
+	{
+		TotalForceMagnitudeThisFrame = 0;
+	}
+
+	MoveTrack();
 }
 
 void UTankTrackComponent::Build(UInstancedStaticMeshComponent * mesh)
@@ -36,11 +49,34 @@ void UTankTrackComponent::SetupSpline(int wheelId, FVector location, float wheel
 	FVector upVector = GetUpVectorAtSplinePoint(pointIndex, ESplineCoordinateSpace::Local);
 	FVector inLocation = localWheelPos - (wheelRadius + TrackTicknessOffset) * upVector;
 
-	//SetLocationAtSplinePoint(pointIndex, inLocation, ESplineCoordinateSpace::Local);
+	SetLocationAtSplinePoint(pointIndex, inLocation, ESplineCoordinateSpace::Local);
 }
 
-void UTankTrackComponent::MoveTrack(float deltaTrackOffset)
+void UTankTrackComponent::AddForce(float ForceMagnitude)
 {
+	TotalForceMagnitudeThisFrame += ForceMagnitude;
+}
+
+void UTankTrackComponent::MoveTrack()
+{
+	const auto trackLength = GetSplineLength();
+	const auto treadLength = GetSplineLength() / TreadCount;
+
+	const auto lasttrackOffset = TrackOffsetPercentage * trackLength;
+	auto trackOffset = FMath::Fmod(lasttrackOffset - TotalForceMagnitudeThisFrame, trackLength);
+
+	if (trackOffset < 0)
+	{
+		trackOffset = trackLength + trackOffset;
+	}
+
+	for (auto i = 0; i < TreadCount; i++)
+	{
+		const auto offset = FMath::Fmod(treadLength * i + trackOffset, trackLength);
+		Mesh->UpdateInstanceTransform(i, GetTransformAtDistanceAlongSpline(offset, ESplineCoordinateSpace::Local), false, i == TreadCount - 1, false);
+	}
+
+	TrackOffsetPercentage = trackOffset / trackLength;
 }
 
 void UTankTrackComponent::SetThrottle(float throttle)
@@ -54,10 +90,17 @@ void UTankTrackComponent::DriveTrack(float CurrentThrottle)
 	auto forceAplied = CurrentThrottle * TrackMaxDrivingForce;
 	auto SpringWheels = GetWheels<ASprungWheel>();
 	auto Wheels = GetWheels<AWheel>();
+	auto w = GetChildrenWheels<ASprungWheel>();
+
 	auto ForcePerWheel = forceAplied / (SpringWheels.Num() + Wheels.Num());
 	for (ASprungWheel* Wheel : SpringWheels)
 	{
 		Wheel->AddDrivingForce(ForcePerWheel);
+	}
+
+	for (ASprungWheel* Wheel : w)
+	{
+		//Wheel->AddDrivingForce(ForcePerWheel);
 	}
 
 	for (AWheel* Wheel : Wheels)
@@ -78,6 +121,26 @@ TArray<T*> UTankTrackComponent::GetWheels() const
 		if (!SpawnPointChild) continue;
 
 		AActor* SpawnedChild = SpawnPointChild->GetSpawnedActor();
+		auto Wheel = Cast<T>(SpawnedChild);
+		if (!Wheel) continue;
+
+		ResultArray.Add(Wheel);
+	}
+	return ResultArray;
+}
+
+template<class T>
+TArray<T*> UTankTrackComponent::GetChildrenWheels() const
+{
+	TArray<T*> ResultArray;
+	TArray<USceneComponent*> Children;
+	GetChildrenComponents(true, Children);
+	for (USceneComponent* Child : Children)
+	{
+		auto SpawnPointChild = Cast<UChildActorComponent>(Child);
+		if (!SpawnPointChild) continue;
+
+		AActor* SpawnedChild = SpawnPointChild->GetChildActor();
 		auto Wheel = Cast<T>(SpawnedChild);
 		if (!Wheel) continue;
 

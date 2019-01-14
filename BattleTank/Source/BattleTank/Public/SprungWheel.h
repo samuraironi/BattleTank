@@ -27,6 +27,8 @@ public:
 	float GetRadius();
 
 	FVector GetLocation();
+
+	void BuildWheel();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

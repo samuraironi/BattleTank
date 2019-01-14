@@ -23,6 +23,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 		
+	virtual void OnRegister() override;
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
 	int Id = 0;
@@ -32,4 +33,7 @@ private:
 
 	UPROPERTY()
 	AActor* SpawnedActor;
+
+	UFUNCTION(BlueprintCallable)
+	void SetSpawnActor();
 };

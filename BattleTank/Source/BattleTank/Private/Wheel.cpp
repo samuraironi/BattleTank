@@ -71,6 +71,6 @@ void AWheel::DriveWheel(float relativeSpeed)
 
 void AWheel::ApplyForce()
 {
-	//Wheel->AddForce(Wheel->GetForwardVector() * TotalForceMagnitudeThisFrame);
+	Wheel->AddForce(Wheel->GetForwardVector() * TotalForceMagnitudeThisFrame);
 }
 

@@ -21,14 +21,18 @@ public:
 
 	//Max force pert track in Newtons
 	UPROPERTY(EditDefaultsOnly)
-	float TrackMaxDrivingForce = 40000; //Assume 40 tonne tank and 1g acceleration
+	float TrackMaxDrivingForce = 4000000; //Assume 40 tonne tank and 1g acceleration
 
 	template<class T>
 	FORCEINLINE TArray<T*> GetWheels() const;
 
+	template<class T>
+	TArray<T*> GetChildrenWheels() const;
+
 	void SetupSpline(int wheelId, FVector location, float wheelRadius);
 
-	void MoveTrack(float deltaTrackOffset);
+	void AddForce(float ForceMagnitude);
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	int TreadCount = 80;
@@ -39,10 +43,19 @@ protected:
 private:
 	UTankTrackComponent(const FObjectInitializer& objectInitializer);
 
+	// Called every frame
+	void TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
+
+	float TotalForceMagnitudeThisFrame = 0;
+
+	float TrackOffsetPercentage = 0;
+
 	UFUNCTION(BlueprintCallable)
 	void Build(UInstancedStaticMeshComponent* mesh);
 
 	UInstancedStaticMeshComponent* Mesh = nullptr;
 
 	void DriveTrack(float CurrentThrottle);
+
+	void MoveTrack();
 };

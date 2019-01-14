@@ -8,9 +8,6 @@
 
 void UTankMovementComponent::Initialise(UTankTrackComponent* leftTrackComponent, UTankTrackComponent* rightTrackComponent)
 {
-	//LeftTrack = leftTrack;
-	//RightTrack = rightTrack;
-
 	LeftTrack = leftTrackComponent;
 	RightTrack = rightTrackComponent;
 }
@@ -24,12 +21,14 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick tickType,
 		auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < leftSpringWheels.Num(); i++)
 		{
-			//LeftTrack->SetupSpline(i, leftSpringWheels[i]->GetLocation(), leftSpringWheels[i]->GetRadius());
+			LeftTrack->SetupSpline(i, leftSpringWheels[i]->GetLocation(), leftSpringWheels[i]->GetRadius());
 		}
 		for (int i = 0; i < leftWheels.Num(); i++)
 		{
 
 		}
+
+		//LeftTrack->AddForce(10);
 	}
 	if (RightTrack)
 	{
@@ -37,12 +36,13 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick tickType,
 		auto rightSpringWheels = RightTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < rightSpringWheels.Num(); i++)
 		{
-			//RightTrack->SetupSpline(i, rightSpringWheels[i]->GetLocation(), rightSpringWheels[i]->GetRadius());
+			RightTrack->SetupSpline(i, rightSpringWheels[i]->GetLocation(), rightSpringWheels[i]->GetRadius());
 		}
 		for (int i = 0; i < rightWheels.Num(); i++)
 		{
 
 		}
+		//RightTrack->AddForce(10);
 	}
 }
 
@@ -68,6 +68,9 @@ void UTankMovementComponent::IntendMoveForward(float Throw)
 	if (!ensure(LeftTrack && RightTrack)) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
+
+	LeftTrack->AddForce(Throw);
+	RightTrack->AddForce(Throw);
 
 	/*auto leftWheels = LeftTrack->GetWheels<AWheel>();
 	auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
