@@ -26,6 +26,8 @@ public:
 	float GetRadius();
 
 	FVector GetLocation();
+
+	void SetId(int id);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,7 +45,6 @@ private:
 
 	float Radius = 0;
 
-	UPROPERTY(EditAnywhere, Category = Setup)
 	int Id = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)

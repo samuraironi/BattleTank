@@ -26,12 +26,7 @@ public:
 	template<class T>
 	FORCEINLINE TArray<T*> GetWheels() const;
 
-	template<class T>
-	TArray<T*> GetChildrenWheels() const;
-
 	void SetupSpline(int wheelId, FVector location, float wheelRadius);
-
-	void AddForce(float ForceMagnitude);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)

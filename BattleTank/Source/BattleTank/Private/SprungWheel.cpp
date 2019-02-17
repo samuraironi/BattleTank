@@ -96,6 +96,16 @@ FVector ASprungWheel::GetLocation()
 	return Wheel->GetComponentLocation();
 }
 
+int ASprungWheel::GetId()
+{
+	return this->Id;
+}
+
+void ASprungWheel::SetId(int id)
+{
+	Id = id;
+}
+
 void ASprungWheel::ApplyForce()
 {
 	Wheel->AddForce(Axle->GetForwardVector() * TotalForceMagnitudeThisFrame);

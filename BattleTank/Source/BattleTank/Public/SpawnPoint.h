@@ -19,13 +19,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	AActor* GetSpawnedActor() const { return SpawnedActor; }
+	int GetId();
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 		
 	virtual void OnRegister() override;
 private:
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	int Id = 0;
 
 	UPROPERTY(EditDefaultsOnly, Category = Setup)

@@ -20,6 +20,11 @@ void USpawnPoint::OnRegister()
 	Super::OnRegister();
 }
 
+int USpawnPoint::GetId()
+{
+	return Id;
+}
+
 // Called when the game starts
 void USpawnPoint::BeginPlay()
 {

@@ -28,6 +28,10 @@ public:
 
 	FVector GetLocation();
 
+	int GetId();
+
+	void SetId(int id);
+
 	void BuildWheel();
 protected:
 	// Called when the game starts or when spawned
@@ -51,7 +55,6 @@ private:
 
 	float Radius = 0;
 
-	UPROPERTY(EditAnywhere, Category = Setup)
 	int Id = 0;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)

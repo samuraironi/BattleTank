@@ -20,7 +20,7 @@ void UTankTrackComponent::TickComponent(float DeltaTime, ELevelTick tickType, FA
 	{
 		TotalForceMagnitudeThisFrame = 0;
 	}
-
+	
 	MoveTrack();
 }
 
@@ -44,17 +44,10 @@ void UTankTrackComponent::SetupSpline(int wheelId, FVector location, float wheel
 	auto localWheelPos = GetComponentTransform().InverseTransformPosition(location);
 	localWheelPos.Y = 0;
 
-	int32 pointIndex = wheelId;
-
-	FVector upVector = GetUpVectorAtSplinePoint(pointIndex, ESplineCoordinateSpace::Local);
+	FVector upVector = GetUpVectorAtSplinePoint(wheelId, ESplineCoordinateSpace::Local);
 	FVector inLocation = localWheelPos - (wheelRadius + TrackTicknessOffset) * upVector;
 
-	SetLocationAtSplinePoint(pointIndex, inLocation, ESplineCoordinateSpace::Local);
-}
-
-void UTankTrackComponent::AddForce(float ForceMagnitude)
-{
-	TotalForceMagnitudeThisFrame += ForceMagnitude;
+	SetLocationAtSplinePoint(wheelId, inLocation, ESplineCoordinateSpace::Local);
 }
 
 void UTankTrackComponent::MoveTrack()
@@ -73,6 +66,7 @@ void UTankTrackComponent::MoveTrack()
 	for (auto i = 0; i < TreadCount; i++)
 	{
 		const auto offset = FMath::Fmod(treadLength * i + trackOffset, trackLength);
+		
 		Mesh->UpdateInstanceTransform(i, GetTransformAtDistanceAlongSpline(offset, ESplineCoordinateSpace::Local), false, i == TreadCount - 1, false);
 	}
 
@@ -83,29 +77,25 @@ void UTankTrackComponent::SetThrottle(float throttle)
 {
 	float CurrentThrottle = FMath::Clamp<float>(throttle, -1, 1);
 	DriveTrack(CurrentThrottle);
+	TotalForceMagnitudeThisFrame += throttle;
 }
 
 void UTankTrackComponent::DriveTrack(float CurrentThrottle)
 {
+
 	auto forceAplied = CurrentThrottle * TrackMaxDrivingForce;
 	auto SpringWheels = GetWheels<ASprungWheel>();
 	auto Wheels = GetWheels<AWheel>();
-	auto w = GetChildrenWheels<ASprungWheel>();
 
-	auto ForcePerWheel = forceAplied / (SpringWheels.Num() + Wheels.Num());
+	auto forcePerWheel = forceAplied / (SpringWheels.Num() + Wheels.Num());
 	for (ASprungWheel* Wheel : SpringWheels)
 	{
-		Wheel->AddDrivingForce(ForcePerWheel);
-	}
-
-	for (ASprungWheel* Wheel : w)
-	{
-		//Wheel->AddDrivingForce(ForcePerWheel);
+		Wheel->AddDrivingForce(forcePerWheel);
 	}
 
 	for (AWheel* Wheel : Wheels)
 	{
-		Wheel->AddDrivingForce(ForcePerWheel);
+		//Wheel->AddDrivingForce(ForcePerWheel);
 	}
 }
 
@@ -124,26 +114,7 @@ TArray<T*> UTankTrackComponent::GetWheels() const
 		auto Wheel = Cast<T>(SpawnedChild);
 		if (!Wheel) continue;
 
-		ResultArray.Add(Wheel);
-	}
-	return ResultArray;
-}
-
-template<class T>
-TArray<T*> UTankTrackComponent::GetChildrenWheels() const
-{
-	TArray<T*> ResultArray;
-	TArray<USceneComponent*> Children;
-	GetChildrenComponents(true, Children);
-	for (USceneComponent* Child : Children)
-	{
-		auto SpawnPointChild = Cast<UChildActorComponent>(Child);
-		if (!SpawnPointChild) continue;
-
-		AActor* SpawnedChild = SpawnPointChild->GetChildActor();
-		auto Wheel = Cast<T>(SpawnedChild);
-		if (!Wheel) continue;
-
+		Wheel->SetId(SpawnPointChild->GetId());
 		ResultArray.Add(Wheel);
 	}
 	return ResultArray;

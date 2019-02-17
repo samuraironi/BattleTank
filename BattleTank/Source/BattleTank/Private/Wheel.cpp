@@ -36,6 +36,11 @@ FVector AWheel::GetLocation()
 	return Wheel->GetComponentLocation();
 }
 
+void AWheel::SetId(int id)
+{
+	Id = id;
+}
+
 // Called every frame
 void AWheel::Tick(float DeltaTime)
 {
@@ -45,7 +50,7 @@ void AWheel::Tick(float DeltaTime)
 	{
 		TotalForceMagnitudeThisFrame = 0;
 	}
-	ApplyForce();
+	//ApplyForce();
 }
 
 void AWheel::AddDrivingForce(float ForceMagnitude)
@@ -71,6 +76,6 @@ void AWheel::DriveWheel(float relativeSpeed)
 
 void AWheel::ApplyForce()
 {
-	Wheel->AddForce(Wheel->GetForwardVector() * TotalForceMagnitudeThisFrame);
+	//Wheel->AddForce(Wheel->GetForwardVector() * TotalForceMagnitudeThisFrame);
 }
 

@@ -21,14 +21,14 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick tickType,
 		auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < leftSpringWheels.Num(); i++)
 		{
-			LeftTrack->SetupSpline(i, leftSpringWheels[i]->GetLocation(), leftSpringWheels[i]->GetRadius());
+			auto wheel = leftSpringWheels[i];
+			LeftTrack->SetupSpline(wheel->GetId(), wheel->GetLocation(), wheel->GetRadius());
 		}
 		for (int i = 0; i < leftWheels.Num(); i++)
 		{
 
 		}
 
-		//LeftTrack->AddForce(10);
 	}
 	if (RightTrack)
 	{
@@ -36,19 +36,18 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick tickType,
 		auto rightSpringWheels = RightTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < rightSpringWheels.Num(); i++)
 		{
-			RightTrack->SetupSpline(i, rightSpringWheels[i]->GetLocation(), rightSpringWheels[i]->GetRadius());
+			auto wheel = rightSpringWheels[i];
+			RightTrack->SetupSpline(wheel->GetId(), wheel->GetLocation(), wheel->GetRadius());
 		}
 		for (int i = 0; i < rightWheels.Num(); i++)
 		{
 
 		}
-		//RightTrack->AddForce(10);
 	}
 }
 
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed)
 {
-	UE_LOG(LogTemp, Warning, TEXT("request direct move"));
 	auto TankForwardDirection = GetOwner()->GetActorForwardVector().GetSafeNormal();
 	auto AIForwardIntention = MoveVelocity.GetSafeNormal();
 
@@ -61,51 +60,15 @@ void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, boo
 
 void UTankMovementComponent::IntendMoveForward(float Throw)
 {
-	//if (!ensure(LeftTrack && RightTrack)) { return; }
-	//LeftTrack->SetThrottle(Throw);
-	//RightTrack->SetThrottle(Throw);
-
 	if (!ensure(LeftTrack && RightTrack)) { return; }
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
-
-	LeftTrack->AddForce(Throw);
-	RightTrack->AddForce(Throw);
-
-	/*auto leftWheels = LeftTrack->GetWheels<AWheel>();
-	auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
-	for (AWheel* wheel : leftWheels)
-	{
-		auto forceAplied = Throw * LeftTrack->TrackMaxDrivingForce;
-		auto ForcePerWheel = forceAplied / (leftSpringWheels.Num() + leftWheels.Num());
-		wheel->DriveWheel(-ForcePerWheel);
-	}
-	for (ASprungWheel* wheel : leftSpringWheels)
-	{
-		auto forceAplied = Throw * LeftTrack->TrackMaxDrivingForce;
-		auto ForcePerWheel = forceAplied / (leftSpringWheels.Num() + leftWheels.Num());
-		wheel->DriveWheel(-ForcePerWheel);
-	}
-
-	auto rightWheels = RightTrack->GetWheels<AWheel>();
-	auto rightSpringWheels = RightTrack->GetWheels<ASprungWheel>();
-	for (AWheel* wheel : rightWheels)
-	{
-		auto forceAplied = Throw * RightTrack->TrackMaxDrivingForce;
-		auto ForcePerWheel = forceAplied / (rightSpringWheels.Num() + rightWheels.Num());
-		wheel->DriveWheel(-ForcePerWheel);
-	}
-	for (ASprungWheel* wheel : rightSpringWheels)
-	{
-		auto forceAplied = Throw * RightTrack->TrackMaxDrivingForce;
-		auto ForcePerWheel = forceAplied / (rightSpringWheels.Num() + rightWheels.Num());
-		wheel->DriveWheel(-ForcePerWheel);
-	}*/
 }
 
 void UTankMovementComponent::IntendRotate(float Throw)
 {
-	//if (!ensure(LeftTrack && RightTrack)) { return; }
-	//LeftTrack->SetThrottle(Throw);
-	//RightTrack->SetThrottle(-Throw);
+	if (!ensure(LeftTrack && RightTrack)) { return; }
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(-Throw);
+	
 }
