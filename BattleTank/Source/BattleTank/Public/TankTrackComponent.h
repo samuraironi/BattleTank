@@ -41,7 +41,7 @@ private:
 	// Called every frame
 	void TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
 
-	float TotalForceMagnitudeThisFrame = 0;
+	float CurrentForce = 0;
 
 	float TrackOffsetPercentage = 0;
 

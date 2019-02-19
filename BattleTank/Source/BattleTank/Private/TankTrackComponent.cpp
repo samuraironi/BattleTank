@@ -18,9 +18,9 @@ void UTankTrackComponent::TickComponent(float DeltaTime, ELevelTick tickType, FA
 
 	if (GetWorld()->TickGroup == TG_PostPhysics)
 	{
-		TotalForceMagnitudeThisFrame = 0;
+		CurrentForce = 0;
 	}
-	
+
 	MoveTrack();
 }
 
@@ -56,7 +56,7 @@ void UTankTrackComponent::MoveTrack()
 	const auto treadLength = GetSplineLength() / TreadCount;
 
 	const auto lasttrackOffset = TrackOffsetPercentage * trackLength;
-	auto trackOffset = FMath::Fmod(lasttrackOffset - TotalForceMagnitudeThisFrame, trackLength);
+	auto trackOffset = FMath::Fmod(lasttrackOffset - CurrentForce, trackLength);
 
 	if (trackOffset < 0)
 	{
@@ -77,12 +77,11 @@ void UTankTrackComponent::SetThrottle(float throttle)
 {
 	float CurrentThrottle = FMath::Clamp<float>(throttle, -1, 1);
 	DriveTrack(CurrentThrottle);
-	TotalForceMagnitudeThisFrame += throttle;
+	CurrentForce += throttle;
 }
 
 void UTankTrackComponent::DriveTrack(float CurrentThrottle)
 {
-
 	auto forceAplied = CurrentThrottle * TrackMaxDrivingForce;
 	auto SpringWheels = GetWheels<ASprungWheel>();
 	auto Wheels = GetWheels<AWheel>();
