@@ -17,11 +17,11 @@ class BATTLETANK_API UTankTrackComponent : public USplineComponent
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void SetThrottle(float throttle);
+	void SetThrottle(float throttle);
 
 	//Max force pert track in Newtons
 	UPROPERTY(EditDefaultsOnly)
-	float TrackMaxDrivingForce = 4000000; //Assume 40 tonne tank and 1g acceleration
+	float TrackMaxDrivingForce = 40000000; //Assume 40 tonne tank and 1g acceleration
 
 	template<class T>
 	FORCEINLINE TArray<T*> GetWheels() const;
@@ -35,15 +35,23 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	float TrackTicknessOffset = 10;
 
+	virtual void BeginPlay() override;
 private:
+	float DeltaX = 0;
+
+	float CurrentThrottle = 0.f;
+
+	float TrackOffsetPercentage = 0;
+
+	float LastLocation = 0.f;
+
 	UTankTrackComponent(const FObjectInitializer& objectInitializer);
 
 	// Called every frame
 	void TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
 
-	float CurrentForce = 0;
-
-	float TrackOffsetPercentage = 0;
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION(BlueprintCallable)
 	void Build(UInstancedStaticMeshComponent* mesh);

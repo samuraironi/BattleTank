@@ -10,18 +10,29 @@
 UTankTrackComponent::UTankTrackComponent(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	
+}
+
+void UTankTrackComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
 }
 
 void UTankTrackComponent::TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction * thisTickFunction)
 {
 	Super::TickComponent(DeltaTime, tickType, thisTickFunction);
 
-	if (GetWorld()->TickGroup == TG_PostPhysics)
-	{
-		CurrentForce = 0;
-	}
-
+	LastLocation = GetComponentLocation().X;
 	MoveTrack();
+}
+
+void UTankTrackComponent::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("On hit"));
+	DriveTrack(CurrentThrottle);
 }
 
 void UTankTrackComponent::Build(UInstancedStaticMeshComponent * mesh)
@@ -30,6 +41,10 @@ void UTankTrackComponent::Build(UInstancedStaticMeshComponent * mesh)
 	{
 		Mesh = mesh;
 		Mesh->ClearInstances();
+
+		//notify on component hit
+		Mesh->SetNotifyRigidBodyCollision(true);
+		Mesh->OnComponentHit.AddDynamic(this, &UTankTrackComponent::OnHit);
 
 		const auto treadLength = GetSplineLength() / TreadCount;
 		for (auto i = 0; i < TreadCount; i++)
@@ -56,7 +71,7 @@ void UTankTrackComponent::MoveTrack()
 	const auto treadLength = GetSplineLength() / TreadCount;
 
 	const auto lasttrackOffset = TrackOffsetPercentage * trackLength;
-	auto trackOffset = FMath::Fmod(lasttrackOffset - CurrentForce, trackLength);
+	auto trackOffset = FMath::Fmod(lasttrackOffset + DeltaX, trackLength);
 
 	if (trackOffset < 0)
 	{
@@ -75,9 +90,8 @@ void UTankTrackComponent::MoveTrack()
 
 void UTankTrackComponent::SetThrottle(float throttle)
 {
-	float CurrentThrottle = FMath::Clamp<float>(throttle, -1, 1);
-	DriveTrack(CurrentThrottle);
-	CurrentForce += throttle;
+	CurrentThrottle = FMath::Clamp<float>(throttle, -1, 1);
+	DeltaX = LastLocation - GetComponentLocation().X;
 }
 
 void UTankTrackComponent::DriveTrack(float CurrentThrottle)
@@ -86,7 +100,7 @@ void UTankTrackComponent::DriveTrack(float CurrentThrottle)
 	auto SpringWheels = GetWheels<ASprungWheel>();
 	auto Wheels = GetWheels<AWheel>();
 
-	auto forcePerWheel = forceAplied / (SpringWheels.Num() + Wheels.Num());
+	auto forcePerWheel = forceAplied / (SpringWheels.Num());
 	for (ASprungWheel* Wheel : SpringWheels)
 	{
 		Wheel->AddDrivingForce(forcePerWheel);
