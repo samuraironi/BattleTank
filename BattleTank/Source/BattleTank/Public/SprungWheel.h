@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "SprungWheel.generated.h"
 
+DECLARE_DELEGATE(OnWheelHitDelegate);
+
 class UPhysicsConstraintComponent;
 class USphereComponent;
 
@@ -33,6 +35,8 @@ public:
 	void SetId(int id);
 
 	void BuildWheel();
+
+	OnWheelHitDelegate WheelHitDelegate;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -3,17 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SpawnPoint.h"
 #include "Components/SplineComponent.h"
 #include "TankTrackComponent.generated.h"
 
 
 class UInstancedStaticMeshComponent;
+class USceneComponent;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankTrackComponent : public USplineComponent
 {
 	GENERATED_BODY()
-	
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = Input)
@@ -21,13 +22,30 @@ public:
 
 	//Max force pert track in Newtons
 	UPROPERTY(EditDefaultsOnly)
-	float TrackMaxDrivingForce = 40000000; //Assume 40 tonne tank and 1g acceleration
+	float TrackMaxDrivingForce = 4000000; //Assume 40 tonne tank and 1g acceleration
 
 	template<class T>
-	FORCEINLINE TArray<T*> GetWheels() const;
+	FORCEINLINE TArray<T*> GetWheels()
+	{
+		TArray<T*> ResultArray;
+		TArray<USceneComponent*> Children;
+		GetChildrenComponents(true, Children);
+		for (USceneComponent* Child : Children)
+		{
+			auto SpawnPointChild = Cast<USpawnPoint>(Child);
+			if (!SpawnPointChild) continue;
+
+			AActor* SpawnedChild = SpawnPointChild->GetSpawnedActor();
+			auto Wheel = Cast<T>(SpawnedChild);
+			if (!Wheel) continue;
+
+			Wheel->SetId(SpawnPointChild->GetId());
+			ResultArray.Add(Wheel);
+		}
+		return ResultArray;
+	};
 
 	void SetupSpline(int wheelId, FVector location, float wheelRadius);
-
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	int TreadCount = 80;
@@ -39,26 +57,23 @@ protected:
 private:
 	float DeltaX = 0;
 
-	float CurrentThrottle = 0.f;
-
 	float TrackOffsetPercentage = 0;
 
 	float LastLocation = 0.f;
+
+	float CurrentThrottle = 0.f;
 
 	UTankTrackComponent(const FObjectInitializer& objectInitializer);
 
 	// Called every frame
 	void TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction* thisTickFunction) override;
 
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 	UFUNCTION(BlueprintCallable)
 	void Build(UInstancedStaticMeshComponent* mesh);
 
 	UInstancedStaticMeshComponent* Mesh = nullptr;
 
-	void DriveTrack(float CurrentThrottle);
+	void DriveTrack();
 
 	void MoveTrack();
 };

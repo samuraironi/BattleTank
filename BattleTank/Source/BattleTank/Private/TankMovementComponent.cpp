@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankMovementComponent.h"
+#include "TankTrackComponent.h"
 #include "Wheel.h"
 #include "SprungWheel.h"
-#include "TankTrackComponent.h"
 
 void UTankMovementComponent::Initialise(UTankTrackComponent* leftTrackComponent, UTankTrackComponent* rightTrackComponent)
 {
@@ -16,32 +16,35 @@ void UTankMovementComponent::TickComponent(float DeltaTime, ELevelTick tickType,
 	//UE_LOG(LogTemp, Warning, TEXT("Tick from movement"));
 	if (LeftTrack)
 	{
-		auto leftWheels = LeftTrack->GetWheels<AWheel>();
+		
 		auto leftSpringWheels = LeftTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < leftSpringWheels.Num(); i++)
 		{
 			auto wheel = leftSpringWheels[i];
 			LeftTrack->SetupSpline(wheel->GetId(), wheel->GetLocation(), wheel->GetRadius());
 		}
+
+		/*auto leftWheels = LeftTrack->GetWheels<AWheel>();
 		for (int i = 0; i < leftWheels.Num(); i++)
 		{
 
-		}
+		}*/
 
 	}
 	if (RightTrack)
 	{
-		auto rightWheels = RightTrack->GetWheels<AWheel>();
+		
 		auto rightSpringWheels = RightTrack->GetWheels<ASprungWheel>();
 		for (int i = 0; i < rightSpringWheels.Num(); i++)
 		{
 			auto wheel = rightSpringWheels[i];
 			RightTrack->SetupSpline(wheel->GetId(), wheel->GetLocation(), wheel->GetRadius());
 		}
+		/*auto rightWheels = RightTrack->GetWheels<AWheel>();
 		for (int i = 0; i < rightWheels.Num(); i++)
 		{
 
-		}
+		}*/
 	}
 }
 

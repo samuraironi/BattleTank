@@ -70,6 +70,9 @@ void ASprungWheel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UE_LOG(LogTemp, Warning, TEXT("force per wheel %f"), TotalForceMagnitudeThisFrame);
+	ApplyForce();
+
 	if (GetWorld()->TickGroup == TG_PostPhysics)
 	{
 		TotalForceMagnitudeThisFrame = 0;
@@ -78,7 +81,7 @@ void ASprungWheel::Tick(float DeltaTime)
 
 void ASprungWheel::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
-	ApplyForce();
+	WheelHitDelegate.ExecuteIfBound();
 }
 
 void ASprungWheel::AddDrivingForce(float ForceMagnitude)

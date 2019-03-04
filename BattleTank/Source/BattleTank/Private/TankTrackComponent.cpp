@@ -10,15 +10,11 @@
 UTankTrackComponent::UTankTrackComponent(const FObjectInitializer& objectInitializer) : Super(objectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	
 }
 
 void UTankTrackComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
 
 void UTankTrackComponent::TickComponent(float DeltaTime, ELevelTick tickType, FActorComponentTickFunction * thisTickFunction)
@@ -29,11 +25,6 @@ void UTankTrackComponent::TickComponent(float DeltaTime, ELevelTick tickType, FA
 	MoveTrack();
 }
 
-void UTankTrackComponent::OnHit(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
-{
-	UE_LOG(LogTemp, Warning, TEXT("On hit"));
-	DriveTrack(CurrentThrottle);
-}
 
 void UTankTrackComponent::Build(UInstancedStaticMeshComponent * mesh)
 {
@@ -42,15 +33,16 @@ void UTankTrackComponent::Build(UInstancedStaticMeshComponent * mesh)
 		Mesh = mesh;
 		Mesh->ClearInstances();
 
-		//notify on component hit
-		Mesh->SetNotifyRigidBodyCollision(true);
-		Mesh->OnComponentHit.AddDynamic(this, &UTankTrackComponent::OnHit);
-
 		const auto treadLength = GetSplineLength() / TreadCount;
 		for (auto i = 0; i < TreadCount; i++)
 		{
 			Mesh->AddInstance(GetTransformAtDistanceAlongSpline(treadLength * i, ESplineCoordinateSpace::Local));
 		}
+	}
+
+	for (auto wheel : GetWheels<ASprungWheel>())
+	{
+		wheel->WheelHitDelegate.BindUObject(this, &UTankTrackComponent::DriveTrack);
 	}
 }
 
@@ -92,9 +84,10 @@ void UTankTrackComponent::SetThrottle(float throttle)
 {
 	CurrentThrottle = FMath::Clamp<float>(throttle, -1, 1);
 	DeltaX = LastLocation - GetComponentLocation().X;
+	//DriveTrack();
 }
 
-void UTankTrackComponent::DriveTrack(float CurrentThrottle)
+void UTankTrackComponent::DriveTrack()
 {
 	auto forceAplied = CurrentThrottle * TrackMaxDrivingForce;
 	auto SpringWheels = GetWheels<ASprungWheel>();
@@ -106,29 +99,8 @@ void UTankTrackComponent::DriveTrack(float CurrentThrottle)
 		Wheel->AddDrivingForce(forcePerWheel);
 	}
 
-	for (AWheel* Wheel : Wheels)
+	/*for (AWheel* Wheel : Wheels)
 	{
 		//Wheel->AddDrivingForce(ForcePerWheel);
-	}
-}
-
-template<class T>
-TArray<T*> UTankTrackComponent::GetWheels() const
-{
-	TArray<T*> ResultArray;
-	TArray<USceneComponent*> Children;
-	GetChildrenComponents(true, Children);
-	for (USceneComponent* Child : Children)
-	{
-		auto SpawnPointChild = Cast<USpawnPoint>(Child);
-		if (!SpawnPointChild) continue;
-
-		AActor* SpawnedChild = SpawnPointChild->GetSpawnedActor();
-		auto Wheel = Cast<T>(SpawnedChild);
-		if (!Wheel) continue;
-
-		Wheel->SetId(SpawnPointChild->GetId());
-		ResultArray.Add(Wheel);
-	}
-	return ResultArray;
+	}*/
 }
